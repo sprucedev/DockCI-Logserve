@@ -125,7 +125,7 @@ class Consumer(object):  # pylint:disable=too-many-public-methods
         self._logger.info('Channel opened')
         self._channel = channel
         self._channel.add_on_close_callback(self.on_channel_closed)
-        self.setup_exchange(self.EXCHANGE)
+        self.setup_queue(self.QUEUE)
 
     def on_channel_closed(self, channel, reply_code, reply_text):
         """Invoked by pika when RabbitMQ unexpectedly closes the channel.
@@ -142,33 +142,6 @@ class Consumer(object):  # pylint:disable=too-many-public-methods
         self._logger.warning('Channel %i was closed: (%s) %s',
                              channel, reply_code, reply_text)
         self._connection.close()
-
-    def setup_exchange(self, exchange_name):
-        """Setup the exchange on RabbitMQ by invoking the Exchange.Declare RPC
-        command. When it is complete, the on_exchange_declareok method will
-        be invoked by pika.
-
-        :param str|unicode exchange_name: The name of the exchange to declare
-
-        """
-        self._logger.info('Declaring exchange %s', exchange_name)
-        self._channel.exchange_declare(self.on_exchange_declareok,
-                                       exchange_name,
-                                       self.EXCHANGE_TYPE)
-
-    def on_exchange_declareok(
-        self,
-        unused_frame,  # pylint:disable=unused-argument
-    ):
-        """Invoked by pika when RabbitMQ has finished the Exchange.Declare RPC
-        command.
-
-        :param pika.Frame.Method unused_frame: Exchange.DeclareOk response
-                                               frame
-
-        """
-        self._logger.info('Exchange declared')
-        self.setup_queue(self.QUEUE)
 
     def setup_queue(self, queue_name):
         """Setup the queue on RabbitMQ by invoking the Queue.Declare RPC
