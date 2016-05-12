@@ -1,3 +1,4 @@
+dockerfile: dockci.Dockerfile
 utilities:
   - name: python3-4-wheels-debian
     input:
