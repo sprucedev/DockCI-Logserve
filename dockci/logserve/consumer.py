@@ -61,16 +61,8 @@ class Consumer(object):  # pylint:disable=too-many-public-methods
 
         """
         self._logger.info('Connection opened')
-        self.add_on_connection_close_callback()
-        self.open_channel()
-
-    def add_on_connection_close_callback(self):  # pylint:disable=invalid-name
-        """This method adds an on close callback that will be invoked by pika
-        when RabbitMQ closes the connection to the publisher unexpectedly.
-
-        """
-        self._logger.info('Adding connection close callback')
         self._connection.add_on_close_callback(self.on_connection_closed)
+        self.open_channel()
 
     def on_connection_closed(
         self,
@@ -132,16 +124,8 @@ class Consumer(object):  # pylint:disable=too-many-public-methods
         """
         self._logger.info('Channel opened')
         self._channel = channel
-        self.add_on_channel_close_callback()
-        self.setup_exchange(self.EXCHANGE)
-
-    def add_on_channel_close_callback(self):
-        """This method tells pika to call the on_channel_closed method if
-        RabbitMQ unexpectedly closes the channel.
-
-        """
-        self._logger.info('Adding channel close callback')
         self._channel.add_on_close_callback(self.on_channel_closed)
+        self.setup_exchange(self.EXCHANGE)
 
     def on_channel_closed(self, channel, reply_code, reply_text):
         """Invoked by pika when RabbitMQ unexpectedly closes the channel.
@@ -237,18 +221,9 @@ class Consumer(object):  # pylint:disable=too-many-public-methods
 
         """
         self._logger.info('Issuing consumer related RPC commands')
-        self.add_on_cancel_callback()
+        self._channel.add_on_cancel_callback(self.on_consumer_cancelled)
         self._consumer_tag = self._channel.basic_consume(self.on_message,
                                                          self.QUEUE)
-
-    def add_on_cancel_callback(self):
-        """Add a callback that will be invoked if RabbitMQ cancels the consumer
-        for some reason. If RabbitMQ does cancel the consumer,
-        on_consumer_cancelled will be invoked by pika.
-
-        """
-        self._logger.info('Adding consumer cancellation callback')
-        self._channel.add_on_cancel_callback(self.on_consumer_cancelled)
 
     def on_consumer_cancelled(self, method_frame):
         """Invoked by pika when RabbitMQ sends a Basic.Cancel for a consumer
