@@ -342,7 +342,7 @@ def run(logger, add_stop_handler):
     consumer = Consumer(
         pika.ConnectionParameters(
             host=rabbit_host,
-            port=rabbit_port,
+            port=int(rabbit_port),
             credentials=pika.credentials.PlainCredentials(
                 rabbit_user, rabbit_pass,
             ),
