@@ -13,7 +13,8 @@ def run(*_):
     web.run_app(APP)
 
 
-async def handle_health(_):
+@asyncio.coroutine
+def handle_health(_):
     """ API health check """
     return web.Response(body='{"message": "Not Implemented"}'.encode())
 
