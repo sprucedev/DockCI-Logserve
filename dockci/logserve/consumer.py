@@ -19,10 +19,10 @@ class Consumer(object):  # pylint:disable=too-many-public-methods
     commands that were issued and that should surface in the output as well.
 
     """
-    EXCHANGE = 'message'
+    EXCHANGE = 'dockci.job'
     EXCHANGE_TYPE = 'topic'
-    QUEUE = 'text'
-    ROUTING_KEY = 'example.text'
+    QUEUE = 'dockci.logserve'
+    ROUTING_KEY = r'dockci.*.*.*.content'
 
     def __init__(self, connect_params, logger):
         """Create a new instance of the consumer class, passing in the AMQP
