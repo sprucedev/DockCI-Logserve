@@ -1,6 +1,4 @@
 """ Setup and run the DockCI log server API server """
-import logging
-
 from aiohttp import web
 
 from .util import run_wrapper
@@ -10,11 +8,13 @@ APP = web.Application()
 
 
 @run_wrapper('http')
-def run(logger, add_stop_handler):
+def run(*_):
+    """ Run the HTTP API server """
     web.run_app(APP)
 
 
-async def handle_health(request):
+async def handle_health(_):
+    """ API health check """
     return web.Response(body='{"message": "Not Implemented"}'.encode())
 
 

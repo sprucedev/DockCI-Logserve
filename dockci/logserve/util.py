@@ -10,17 +10,22 @@ TERM_SIGNALS = (signal.SIGINT, signal.SIGTERM)
 LOG_FORMAT = ('%(levelname) -7s %(asctime)s %(name) -10s %(funcName) '
               '-10s %(lineno) -4d: %(message)s')
 
+
 def run_wrapper(name):
     """ Wrap the run method to setup signals, and inject logger """
     stop_handlers = []
 
     def outer(func):
+        """ Wrapper for the decorator to handle names """
+
         @wraps(func)
         def inner():
+            """ Do run setup, and call the function """
             logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
             logger = logging.getLogger(name)
 
             def handle_signal(*_):
+                """ Handle stop signals by calling handlers and exiting """
                 logger.info("Shutting down")
                 for handler in stop_handlers:
                     handler()
