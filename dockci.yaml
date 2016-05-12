@@ -1,0 +1,13 @@
+utilities:
+  - name: python3-4-wheels-debian
+    input:
+      - requirements.txt /work/requirements.txt
+      - test-requirements.txt /work/test-requirements.txt
+    command: |-
+      sh -c '
+        pip wheel -r requirements.txt &&
+        pip wheel -r test-requirements.txt
+      '
+    output:
+      - from: /work/wheelhouse
+        to: util
