@@ -5,7 +5,9 @@
 #    pip-compile --output-file requirements.txt requirements.in
 #
 
+aiohttp==0.21.6
 aniso8601==1.1.0          # via flask-restful
+chardet==2.3.0            # via aiohttp
 Flask-RESTful==0.3.5
 Flask==0.10.1             # via flask-restful
 itsdangerous==0.24        # via flask
@@ -17,5 +19,4 @@ pytz==2016.4              # via flask-restful
 requests==2.10.0          # via rollbar
 rollbar==0.12.1
 six==1.10.0               # via flask-restful, python-dateutil, rollbar
-tornado==4.3
 werkzeug==0.11.9          # via flask
