@@ -152,7 +152,11 @@ class Consumer(object):  # pylint:disable=too-many-public-methods
 
         """
         self._logger.info('Declaring queue %s', queue_name)
-        self._channel.queue_declare(self.on_queue_declareok, queue_name, exclusive=True)
+        self._channel.queue_declare(
+            self.on_queue_declareok,
+            queue_name,
+            exclusive=True,
+        )
 
     def on_queue_declareok(
         self,
@@ -212,9 +216,9 @@ class Consumer(object):  # pylint:disable=too-many-public-methods
 
     def on_message(
         self,
-        channel,
+        channel,  # pylint:disable=unused-argument
         basic_deliver,
-        properties,
+        properties,  # pylint:disable=unused-argument
         body,
     ):
         """Invoked by pika when a message is delivered from RabbitMQ. The
@@ -230,7 +234,8 @@ class Consumer(object):  # pylint:disable=too-many-public-methods
         :param str|unicode body: The message body
 
         """
-        project_slug, job_slug, stage_slug = basic_deliver.routing_key.split('.')[1:-1]
+        project_slug, job_slug, stage_slug = (
+            basic_deliver.routing_key.split('.')[1:-1])
         self._logger.info('Received message for %s/%s/%s: %s',
                           project_slug, job_slug, stage_slug, body)
 
@@ -330,7 +335,7 @@ def run(logger, add_stop_handler):
     for _ in range(30):
         try:
             consumer.run()
-        except pika.exceptions.AMQPConnectionError as ex:
+        except pika.exceptions.AMQPConnectionError:
             logger.exception('Connection issue')
             import time
             time.sleep(1)
