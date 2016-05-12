@@ -1,4 +1,6 @@
 """ Setup and run the DockCI log server API server """
+import asyncio
+
 from aiohttp import web
 
 from .util import run_wrapper
