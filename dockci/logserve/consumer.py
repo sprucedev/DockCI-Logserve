@@ -351,4 +351,11 @@ def run(logger, add_stop_handler):
     )
 
     add_stop_handler(consumer.stop)
-    consumer.run()
+
+    for _ in range(30):
+        try:
+            consumer.run()
+        except pika.exceptions.AMQPConnectionError as ex:
+            logger.exception('Connection issue')
+            import time
+            time.sleep(1)
