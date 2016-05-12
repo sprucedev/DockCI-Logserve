@@ -2,6 +2,7 @@
 import os
 
 import pika
+import py
 
 from .util import run_wrapper
 
@@ -238,6 +239,12 @@ class Consumer(object):  # pylint:disable=too-many-public-methods
             basic_deliver.routing_key.split('.')[1:-1])
         self._logger.info('Received message for %s/%s/%s: %s',
                           project_slug, job_slug, stage_slug, body)
+
+        job_path = py.path.local('data').join(project_slug, job_slug)
+        job_path.ensure(dir=True)
+        stage_path = job_path.join(stage_slug)
+        with stage_path.open('ab') as handle:
+            handle.write(body)
 
         self.acknowledge_message(basic_deliver.delivery_tag)
 
