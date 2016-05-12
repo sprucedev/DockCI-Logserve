@@ -212,7 +212,7 @@ class Consumer(object):  # pylint:disable=too-many-public-methods
 
     def on_message(
         self,
-        unused_channel,  # pylint:disable=unused-argument
+        channel,
         basic_deliver,
         properties,
         body,
@@ -230,8 +230,10 @@ class Consumer(object):  # pylint:disable=too-many-public-methods
         :param str|unicode body: The message body
 
         """
-        self._logger.info('Received message # %s from %s: %s',
-                          basic_deliver.delivery_tag, properties.app_id, body)
+        project_slug, job_slug, stage_slug = basic_deliver.routing_key.split('.')[1:-1]
+        self._logger.info('Received message for %s/%s/%s: %s',
+                          project_slug, job_slug, stage_slug, body)
+
         self.acknowledge_message(basic_deliver.delivery_tag)
 
     def acknowledge_message(self, delivery_tag):
