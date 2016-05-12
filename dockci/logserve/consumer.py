@@ -152,7 +152,7 @@ class Consumer(object):  # pylint:disable=too-many-public-methods
 
         """
         self._logger.info('Declaring queue %s', queue_name)
-        self._channel.queue_declare(self.on_queue_declareok, queue_name)
+        self._channel.queue_declare(self.on_queue_declareok, queue_name, exclusive=True)
 
     def on_queue_declareok(
         self,
