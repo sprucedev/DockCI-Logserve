@@ -295,22 +295,24 @@ def try_qs_int(request, key):
 def handle_log(request):
     """ Handle streaming logs to a client """
     params = request.match_info
-    log_path = py.path.local('data').join(
+
+    log_dir = py.path.local('data').join(
         params['project_slug'],
         params['job_slug'],
-        params['stage_slug'],
     )
-    if not log_path.check():
-        APP.logger.warning(
-            'Log for project %s job %s stage %s not found',
-            params['project_slug'], params['job_slug'], params['stage_slug'],
-        )
-        return web.Response(status=404)
 
-    APP.logger.info(
-        'Log for project %s job %s stage %s found',
-        params['project_slug'], params['job_slug'], params['stage_slug'],
-    )
+    # Handle .log ext for DockCI legacy data
+    log_path_bare = log_dir.join(params['stage_slug'])
+    log_path_ext = log_dir.join('%s.log' % params['stage_slug'])
+
+    log_path = None
+    if log_path_bare.check():
+        log_path = log_path_bare
+    elif log_path_ext.check():
+        log_path = log_path_ext
+
+    if log_path is None:
+        return web.Response(status=404)
 
     byte_seek = try_qs_int(request, 'seek')
     line_seek = try_qs_int(request, 'seek_lines')
