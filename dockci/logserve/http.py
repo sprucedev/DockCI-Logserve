@@ -17,7 +17,7 @@ def run(logger, *_):
     """ Run the HTTP API server """
     APP.logger = logger
 
-    with concurrent.futures.ThreadPoolExecutor() as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         APP.executor = executor
         web.run_app(APP)
 
