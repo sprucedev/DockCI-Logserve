@@ -17,7 +17,6 @@ RUN ./_deps_python.sh
 
 ADD entrypoint.sh /code/entrypoint.sh
 ADD dockci /code/dockci
-ADD tests /code/tests
 ADD pylint.conf /code/pylint.conf
 
 EXPOSE 5000
