@@ -1,6 +1,4 @@
 aiohttp==0.21.6
-Flask_RESTful==0.3.5
-Flask==0.10.1
 pika==0.10.0
 py==1.4.30
 rollbar==0.12.1

@@ -3,6 +3,7 @@ set -e
 
 THIS_DIR="$(cd "$(dirname "$0")"; pwd)"
 source "$THIS_DIR/python_env/bin/activate"
+export PYTHONPATH="$THISDIR:$PYTHONPATH"
 
 if [[ -x "$THIS_DIR/pre-entry.sh" ]]; then
   echo "Sourcing pre-entry script" >&2
@@ -23,11 +24,8 @@ function styletest {
 function doctest {
   py.test --doctest-modules -vvrxs "$THIS_DIR/dockci"
 }
-function unittest {
-  py.test --vvrxs "$THIS_DIR/tests"
-}
 function ci {
-  styletest; doctest; unittest
+  styletest; doctest
 }
 function _run {
   python -c "from dockci.logserve.$1 import run; run()"
@@ -40,6 +38,6 @@ function run-consumer {
 }
 
 case "$1" in
-  styletest|doctest|unittest|ci|run-http|run-consumer) "$1" ;;
+  styletest|doctest|ci|run-http|run-consumer) "$1" ;;
   *) "$@" ;;
 esac
