@@ -265,7 +265,7 @@ def _seeker_lines_one_back(handle):
 def try_qs_int(request, key):
     """
     Try to get a query string arg, and parse it as an ``int``. Returns
-    ``None`` if the key doesn't exist
+    ``None`` if the key doesn't exist, or if the value resolves to ``'None'``
 
     Examples:
 
@@ -274,7 +274,16 @@ def try_qs_int(request, key):
     ...     pass
     >>> request = TestClass()
 
-    >>> request.GET = MultiDict([('a', '1'), ('b', '2'), ('b', '3')])
+    >>> request.GET = MultiDict([
+    ...     ('a', '1'),
+    ...     ('b', '2'),
+    ...     ('b', '3'),
+    ...     ('c', b'4'),
+    ...     ('d', 'None'),
+    ...     ('e', b'None'),
+    ...     ('f', 'null'),
+    ...     ('g', b'null'),
+    ... ])
 
     >>> try_qs_int(request, 'a')
     1
@@ -282,13 +291,33 @@ def try_qs_int(request, key):
     >>> try_qs_int(request, 'b')
     2
 
-    >>> str(try_qs_int(request, 'c'))
-    'None'
+    >>> try_qs_int(request, 'c')
+    4
+
+    >>> type(try_qs_int(request, 'no'))
+    <class 'NoneType'>
+
+    >>> type(try_qs_int(request, 'd'))
+    <class 'NoneType'>
+
+    >>> type(try_qs_int(request, 'e'))
+    <class 'NoneType'>
+
+    >>> type(try_qs_int(request, 'f'))
+    <class 'NoneType'>
+
+    >>> type(try_qs_int(request, 'g'))
+    <class 'NoneType'>
     """
     try:
-        return int(request.GET[key])
+        value = request.GET[key]
     except KeyError:
         return None
+    else:
+        return (
+            None if value in ('None', b'None', 'null', b'null')
+            else int(value)
+        )
 
 
 @asyncio.coroutine
