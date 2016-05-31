@@ -359,7 +359,9 @@ def handle_log(request):
             status=400,
         )
 
-    response = web.StreamResponse(status=200)
+    response = web.StreamResponse(status=200, headers={
+        'content-type': 'text/plain',
+    })
     yield from response.prepare(request)
 
     with log_path.open('rb') as handle:
